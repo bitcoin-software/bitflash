@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Bitflash - make on-chain transactions via Lightning Network</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">BitFlash.club <img height="20" src="./bf/bitcoin.svg">&nbsp<img height="20" src="./bf/litecoin.svg"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://golightning.club">Want to swap on-chain funds to LN? Go ⚡Lightning!</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://t.me/LNswapBot" target="_blank"><img src="./bf/telegram.png" height="20">Telegram bot</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://t.me/joinchat/B9nfbhZ5XLeySPpLDrfzbg"><img src="./bf/support.png" height="20">Support & community</a>
+          </li>
+          <!--li class="nav-item">
+            <a class="nav-link" href="#"><img src="./bf/github.png" height="20"> Source-code (soon)</a>
+          </li-->
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main - Order -->
+  <div class="container" id="order">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">Make cheap on-chain transactions using Lightning!</h1>
+            <label for="destination-address"><p class="lead" id="address-label">Your destination address</p></label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="address-currency">#</span>
+              </div>
+              <input type="text" class="form-control" id="destination-address" aria-describedby="basic-addon3">
+            </div>
+            <div class="form-group">
+              <label for="amount-field"><p class="lead" id="amount">Amount</p></label>
+              <input type="text" class="form-control" id="amount-field" placeholder="0.1234">
+            </div>
+            <button onclick="getdata()" class="btn btn-primary" id="txbutton" disabled="true">Make <img src="./bf/lnbolt.png" height="30"> payment</button>
+            <p><b>Note!</b> Bitflash is joining multiple Lightning transactions into a single on-chain transaction, so you can pay much less in fees<br />
+            Transaction will be made when enough participants will join current round (time may vary)<br />
+            Check out also <a href="https://fixedfloat.com" target="_blank">FixedFloat</a>, <a href="https://zigzag.io" target="_blank">ZigZag</a> and <a href="https://boltz.exchange" target="_blank">Boltz.exchange</a></p>
+
+      </div>
+    </div>
+  </div>
+
+    <!-- Payment invoice creation info -->
+  <div class="container" id="payment" style="display: none;">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5" id="order-status">Your order is in progress...</h1>
+            <img src="./bf/loading.gif" height="200" id="loading-gif">
+            <p id="invoice-title">Be patient, order creation may take up to 10 seconds!</p>
+      </div>
+    </div>
+  </div>
+
+      <!-- Payment info -->
+  <div class="container" id="payment-data" style="display: none;">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5" id="qr-title">Please pay this invoice</h1>
+        <ul class="list-unstyled">
+          <li id="order-id">id: </li>
+          <li id="order-payto">to: </li>
+          <li id="order-receiveto">to:: </li>
+        </ul>
+            <a href="#" id="qrlink-payment" target="_blank"><div id="qr" align="center">
+
+            </div></a>
+            <code id="bolt11-text" style="width: 120px;">bolt11 here</code><br />
+            <button onclick="startnew()" class="btn btn-primary" id="startbutton">New <img src="./bf/lnbolt.png" height="30"> payment</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Latest transactions -->
+    <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">on-going transaction filled up for:</h1>
+        <ul class="list-unstyled">
+          <li> BTC: <code id="btc-status">0</code>%</li>
+          <li> LTC: <code id="ltc-status">0</code>%</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- .onion -->
+    <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">Connect via Tor</h1>
+        <ul class="list-unstyled">
+          <li>web: <a href="http://umgiuv4tzk35i7i2x2juicsyyz4mw2ywdtocms4tbqpqhr7oocjthrid.onion">umgiuv4tzk35i7i2x2juicsyyz4mw2ywdtocms4tbqpqhr7oocjthrid.onion</a></li>
+          <li>api: <a href="http://rn6ns4he2nbprkdz64ykj3yyv3cbcdf55ftcehmmzdekxmpe4fpofqad.onion">rn6ns4he2nbprkdz64ykj3yyv3cbcdf55ftcehmmzdekxmpe4fpofqad.onion</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- API -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">Use with single-request REST API</h1>
+          <div class="text-left">
+            <h2>Request: </h2>
+          <p><i>user@server ~$:</i> curl -X POST <b>https://api.bitflash.club/new</b> -d <b>address</b>=ltc1q56knftyp8q55q7vuwdqpdtq69erknuh9ng0kez -d <b>amount</b>=0.15</p>
+            <h2>Response: </h2>
+          <p>{<br/>
+            "order_id": "6fcdb",<i> user-side order id</i><br/><br/>
+            "charge_id": "I4N1jjo8yVw2H4gXMKh48",<i> server-side order id</i><br/><br/>
+            "bolt11": "lnbc2279200n1pwsnahgpp57j498f2fcfkjemdrtvggxtn3gpwz3x234jgjsvysrwg2crfcj3wsdr4gfhk7um5yp68sgr0vcsrqt33x5s8gmeqd36<br/>xxvt3x5mxkmnxw3uhqwr3x56hzdmkw4mkgutsv368zd3ev4exkmn4dqukueesddjh52rfvsarvenrv33zjxqyjw5qcqp2rzjqvlfee8g7rng7ld5nlakh8h<br/>vcyrqtulnljeuvvz5tzrhfx44zkuuwzxc8sqq0ygqqyqqqqqqqqqqqvsqrcgrzu3340frzllcv7aze89amv3mpdntxzfmnrwyew3sclltukqx096tv4zur7zaehn<br/>xhkryy5h3dn42jyy0nxs3fp2szwckhs7rjnnrcqpn8sr6",<i> Lightning invoice to be paid</i><br/><br/>
+            "fee_satoshi": 99,<i> fee charged by bitflash in satoshis</i><br/><br/>
+            "network_fee_sat": 18,<i> network fee in satoshis paid by single participiant</i><br/><br/>
+            "tobe_paid_satoshi": "227920",<i> total satoshis to be paid</i><br/><br/>
+            "receiver": "ltc1q56knftyp8q55q7vuwdqpdtq69erknuh9ng0kez",<i> destination address</i><br/><br/>
+            "receiver_amount": "0.15",<i> destination amount</i><br/><br/>
+            "receiver_currency": "LTC",<i> destination currency</i><br/><br/>
+            "exchange_ltcbtc": "0.01516545"<i> exchange rate (if LTC used)</i><br/><br/>
+            }</p>
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donate -->
+<div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5"><img src="./bf/lnbolt.png" height="50">Donate 10k sats to support this service<img src="./bf/lnbolt.png" height="50"></h1>
+        <ul class="list-unstyled">
+          <li id="donation"><a href="#" id="qrlink" target="_blank"><div  align="center" id="qrcode"></div></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Supporters -->
+<div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5">👍 Our partners & supporters 👍</h1>
+        <p>
+          <a href="https://t.me/lntxbot" target="_blank"><img src="./bf/supporters/lntxbot.png" height="70"></a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="./bf/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="./bf/www.js"></script>
+  <script src="./bf/qrcode.js"></script>
+
+</body>
+
+</html>

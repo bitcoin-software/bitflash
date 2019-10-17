@@ -1,0 +1,21 @@
+[fees]
+ltc = 1200
+btc = 1300
+service = 99
+
+[paylightning]
+
+url = http://server-to-get.rates
+login = secret_login
+password = s3Cr3t_pWd
+
+[charge]
+callback_url = https://yoursite.com/callback
+token = cHarGeToKeN
+url = https://charge.yoursite.com
+
+[wallet]
+bluewallet = 7755:db6a5263f5674ad236db970c11f37991033b8918113855
+lntxbot_url = https://lntxbot.secret.site/addinvoice
+path = /home/user/.electrum/wallets/segwit
+ltc_path = /home/user/.electrum-ltc/wallets/segwit
