@@ -5,7 +5,7 @@ import configparser
 
 ltcwal_config = configparser.ConfigParser()
 ltcwal_config.read('config.ini')
-ltc_wallet = ltcwal_config['wallet']['path']
+ltc_wallet = ltcwal_config['wallet']['ltc_path']
 
 lwallets = [ltc_wallet]
 ltcbinpath = '/usr/local/bin/electrum-ltc'
