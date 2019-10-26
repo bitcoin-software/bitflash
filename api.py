@@ -182,7 +182,7 @@ def create_invoice(addr, amount, fast=False):
                 else:
                     return {'error': 'something went completely wrong. please contact developer!'}
             #FINALLY, return bunch of invoices
-            return invoices_list
+            return {"invoices": invoices_list}
 
     print('generating invoice for msat:' + str(msat))
     inv = invoice(msat=msat, desc='Boost tx of ' + str(amount) + ' to ' + addr + '(id:' + order_id + ')')
@@ -208,7 +208,9 @@ def create_invoice(addr, amount, fast=False):
         if lites:
             order['exchange_ltcbtc'] = "{:.8f}".format(ltc_price)
 
-        return order
+        invoices = list()
+        invoices.append(order)
+        return {"invoices": invoices}
     else:
         return False
 
