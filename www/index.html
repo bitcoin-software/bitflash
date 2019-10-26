@@ -134,19 +134,19 @@
         <h1 class="mt-5">Use with single-request REST API</h1>
           <div class="text-left">
             <h2>Request: </h2>
-          <p><i>user@server ~$:</i> curl -X POST <b>https://api.bitflash.club/new</b> -d <b>address</b>=ltc1q56knftyp8q55q7vuwdqpdtq69erknuh9ng0kez -d <b>amount</b>=0.15</p>
+          <p><i>user@server ~$:</i> curl -X POST <b>https://api.bitflash.club/new</b> -d <b>address</b>=3KaS4kwaKyfbDp5b2CQ3XKfwT3qNN2TSyC -d <b>amount</b>=0.009</p>
             <h2>Response: </h2>
-          <p>{<br/>
+          <p>{ "invoices": [<br/>
             "order_id": "6fcdb",<i> user-side order id</i><br/><br/>
             "charge_id": "I4N1jjo8yVw2H4gXMKh48",<i> server-side order id</i><br/><br/>
             "bolt11": "lnbc2279200n1pwsnahgpp57j498f2fcfkjemdrtvggxtn3gpwz3x234jgjsvysrwg2crfcj3wsdr4gfhk7um5yp68sgr0vcsrqt33x5s8gmeqd36<br/>xxvt3x5mxkmnxw3uhqwr3x56hzdmkw4mkgutsv368zd3ev4exkmn4dqukueesddjh52rfvsarvenrv33zjxqyjw5qcqp2rzjqvlfee8g7rng7ld5nlakh8h<br/>vcyrqtulnljeuvvz5tzrhfx44zkuuwzxc8sqq0ygqqyqqqqqqqqqqqvsqrcgrzu3340frzllcv7aze89amv3mpdntxzfmnrwyew3sclltukqx096tv4zur7zaehn<br/>xhkryy5h3dn42jyy0nxs3fp2szwckhs7rjnnrcqpn8sr6",<i> Lightning invoice to be paid</i><br/><br/>
             "fee_satoshi": 99,<i> fee charged by bitflash in satoshis</i><br/><br/>
             "network_fee_sat": 18,<i> network fee in satoshis paid by single participiant</i><br/><br/>
             "tobe_paid_satoshi": "227920",<i> total satoshis to be paid</i><br/><br/>
-            "receiver": "ltc1q56knftyp8q55q7vuwdqpdtq69erknuh9ng0kez",<i> destination address</i><br/><br/>
+            "receiver": "3KaS4kwaKyfbDp5b2CQ3XKfwT3qNN2TSyC",<i> destination address</i><br/><br/>
             "receiver_amount": "0.15",<i> destination amount</i><br/><br/>
-            "receiver_currency": "LTC",<i> destination currency</i><br/><br/>
             "exchange_ltcbtc": "0.01516545"<i> exchange rate (if LTC used)</i><br/><br/>
+            ]<br/>
             }</p>
             </div>
       </div>
