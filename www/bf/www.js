@@ -81,12 +81,12 @@ $(document).ready(function(){
 
     });
 
-    $.ajax({
-        url: "https://api.bitflash.club/donate"
-    }).then(function(data) {
-        $('#qrlink').attr("href", "lightning:"+data.bolt);
-        new QRCode(document.getElementById("qrcode"), data.bolt);
-    });
+    //$.ajax({
+    //    url: "https://api.bitflash.club/donate"
+    //}).then(function(data) {
+    //    $('#qrlink').attr("href", "lightning:"+data.bolt);
+    //    new QRCode(document.getElementById("qrcode"), data.bolt);
+    //});
 
 });
 
