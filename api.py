@@ -106,6 +106,9 @@ def create_invoice(addr, amount, fast=False):
     if addr.startswith("L") or addr.startswith("M") or addr.startswith("ltc1"):
         fast = True
         #THIS IS FOR LITECOIN
+
+        return {'error': 'litecoin support currently paused due to no demand'}
+
         valid = lvalidate(addr, ltc_wallet)
         if valid != 'true':
             return {'error': 'wrong address'}
