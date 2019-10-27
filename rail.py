@@ -205,7 +205,7 @@ def batch():
 
 
 def batch_ltc():
-    threading.Timer(60.0, batch_ltc).start()
+    threading.Timer(6000.0, batch_ltc).start()
 
     inv_count = 0
 
@@ -237,10 +237,10 @@ def batch_ltc():
         fee_urgent = fees['ltc_full']['perkb']['urgent']
     except Exception as e:
         fee_urgent = 30000
-    print('LTC FEE (lites):')
-    print('per client: ' + str(fees['ltc']))
-    print('for tx (est. urgent): ' + str(fee_urgent * total_kb))
-    print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count * fees['ltc']))
+    #print('LTC FEE (lites):')
+    #print('per client: ' + str(fees['ltc']))
+    #print('for tx (est. urgent): ' + str(fee_urgent * total_kb))
+    #print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count * fees['ltc']))
     # multiply by 10 to make txs less frequently
     if inv_count * fees['ltc'] > 3*fee_urgent*total_kb:
         print('we want to send LTC: ' + ltc_addr_str)
