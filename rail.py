@@ -169,7 +169,7 @@ def batch():
     fee_urgent = fees['btc_full']['perkb']['normal']
     print('BTC FEE:')
     print('per client: ' + str(fees['btc']))
-    print('for tx (est. urgent): ' + str(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
+    print('for tx (est. urgent): ' + "{:.1f}".format(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
     print('current kb size: ' + str(total_kb))
     print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count*fees['btc']))
     if inv_count*fees['btc'] > fee_urgent*total_kb:
