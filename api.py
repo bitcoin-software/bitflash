@@ -168,7 +168,11 @@ def create_invoice(addr, amount, fast=False):
                     payreq = inv['payreq']
                     id = inv['id']
                     register_webhook(id, charge_callbacks)
-                    new_invoice(dtime, order_id, addr, satoshis, id, payreq)
+                    if counter != invoice_count:
+                        new_invoice(dtime, order_id, addr, max_amount_sat, id, payreq)
+                    else:
+                        new_invoice(dtime, order_id, addr, amount_left, id, payreq)
+
                     order = {
                         'order_id': order_id,
                         'charge_id': id,
