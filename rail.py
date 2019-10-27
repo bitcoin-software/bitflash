@@ -170,6 +170,7 @@ def batch():
     print('BTC FEE:')
     print('per client: ' + str(fees['btc']))
     print('for tx (est. urgent): ' + str(fee_urgent*total_kb))
+    print('current kb size): ' + str(total_kb))
     print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count*fees['btc']))
     if inv_count*fees['btc'] > fee_urgent*total_kb:
         print('we want to send BTC: ' + btc_addr_str)
