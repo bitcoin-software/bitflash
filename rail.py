@@ -160,19 +160,22 @@ def batch():
         except KeyError as e:
             receiver_dict_optimized[order_data['address']] = order_data['amount_btc']
 
+    final_output_count = 0
+
     for receiver in receiver_dict_optimized:
+        final_output_count += 1
         btc_addr_str = btc_addr_str + '["' + receiver + '", ' + "{:.8f}".format(receiver_dict_optimized[receiver]) + '],'
     btc_addr_str = btc_addr_str[:-1] + ']'
 
     # print('chargepool: ' + str(btcchargepool))
-    total_kb = (100 + (inv_count * 50)) / 1000
+    total_kb = (100 + (final_output_count * 50)) / 1000
     fee_urgent = fees['btc_full']['perkb']['normal']
     print('BTC FEE:')
     print('per client: ' + str(fees['btc']))
-    print('for tx (est. urgent): ' + "{:.1f}".format(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
+    print('for tx (est. normal): ' + "{:.1f}".format(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
     print('current kb size: ' + str(total_kb))
     print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count*fees['btc']))
-    if inv_count*fees['btc'] > fee_urgent*total_kb:
+    if final_output_count*fees['btc'] > fee_urgent*total_kb:
         print('we want to send BTC: ' + btc_addr_str)
         network_fee = round(int(fee_urgent*total_kb)/100000000,8)
         paymentfee = network_fee
