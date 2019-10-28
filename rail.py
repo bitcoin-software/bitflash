@@ -13,6 +13,8 @@ from ltc_wallet import lstartd, lstopd, ltx_many
 processing = dict()
 processing_ltc = dict()
 
+current_orders = list()
+
 executing = {
     'btc': dict(),
     'ltc': dict()
@@ -115,6 +117,12 @@ def txcheck():
             processing[charge_id] = order_data
             new_status(charge_id, 'processing')
 
+            for order in current_orders:
+                if order['charge_id'] == charge_id:
+                    if order['fast']:
+                        global pay_for_all
+                        pay_for_all = True
+
 
     print('========= stats =========')
     print('paid orders: ' + str(inv_count))
@@ -177,7 +185,12 @@ def batch():
     print('for tx (est. normal): ' + "{:.1f}".format(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
     print('current kb size: ' + str(total_kb))
     print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count*fees['btc']))
-    if final_output_count*fees['btc'] > fee_urgent*total_kb:
+    print('we need for tx to pay: ' + str(final_output_count*fees['btc']))
+
+    global pay_for_all
+
+    if final_output_count*fees['btc'] > fee_urgent*total_kb or pay_for_all:
+        pay_for_all = False
         print('we want to send BTC: ' + btc_addr_str)
         network_fee = round(int(fee_urgent*total_kb)/100000000,8)
         paymentfee = network_fee

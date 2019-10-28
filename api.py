@@ -12,7 +12,7 @@ import configparser
 import threading
 import time
 import base64
-from rail import executing, processing, processing_ltc, pay_for_all
+from rail import executing, processing, processing_ltc, current_orders
 
 app = Flask(__name__)
 api = Api(app)
@@ -170,25 +170,35 @@ def create_invoice(addr, amount, fast=False):
 
         lites = False
 
-        if satoshis <= max_amount_sat and fast:
-            network_fee_sat = getfastfee()
-        else:
-            network_fee_sat = btc_network_fee
-
-        msat = round(satoshis * 1000 + fee_sat * 1000 + network_fee_sat * 1000)
-        currency = 'BTC'
-
-        if satoshis > max_amount_sat and not fast:
-            # divide large amount into multiple smaller ones
-
-            #return {'error': 'maximum amount is 1 000 000 satoshi (0.01 BTC)'}
+        def split_invoices():
             dm = divmod(satoshis, max_amount_sat)
             modulus = dm[0]
             amount_left = dm[1]
             if amount_left > 0:
-                invoice_count = modulus + 1
+                total_invoices = modulus + 1
             else:
-                invoice_count = modulus
+                total_invoices = modulus
+
+            result = {
+                "total_invoices": total_invoices,
+                "amount_left": amount_left
+            }
+
+            return result
+
+        network_fee_sat = btc_network_fee
+
+        msat = round(satoshis * 1000 + fee_sat * 1000 + network_fee_sat * 1000)
+        currency = 'BTC'
+
+        if satoshis > max_amount_sat:
+            # divide large amount into multiple smaller ones
+
+            #return {'error': 'maximum amount is 1 000 000 satoshi (0.01 BTC)'}
+            splitted = split_invoices()
+
+            invoice_count = splitted['total_invoices']
+            amount_left = splitted['amount_left']
 
             counter = 1
             invoices_list = list()
@@ -201,8 +211,10 @@ def create_invoice(addr, amount, fast=False):
                 counter += 1
                 if counter != invoice_count:
                     msat = round(max_amount_sat * 1000 + fee_sat * 1000 + (network_fee_sat / invoice_count) * 1000) + 3
+                    splitted_order_fast = False
                 else:
-                    msat = round(amount_left * 1000 + fee_sat * 1000 + (network_fee_sat / invoice_count) * 1000) + 3
+                    msat = round(amount_left * 1000 + fee_sat * 1000 + getfastfee() * 1000) + 3
+                    splitted_order_fast = fast
 
                 inv = invoice(msat=msat, desc='Boost tx of ' + str(amount) + ' to ' + addr + '(id:' + order_id + ')')
                 if inv:
@@ -222,17 +234,16 @@ def create_invoice(addr, amount, fast=False):
                         'network_fee_sat': round(network_fee_sat / invoice_count)+3,
                         'tobe_paid_satoshi': str(round(msat / 1000)),
                         'receiver': addr,
-                        'fast': False,
+                        'fast': fast,
                         'receiver_amount': str(amount),
                         'receiver_currency': currency
                     }
                     invoices_list.append(order)
+                    current_orders.append(order)
                 else:
                     return {'error': 'something went completely wrong. please contact developer!'}
             #FINALLY, return bunch of invoices
             return {"invoices": invoices_list}
-        elif satoshis > max_amount_sat and fast:
-            return {'error': 'fast parameter is allowed only for single tx which is < 0.01 BTC'}
 
     print('generating invoice for msat:' + str(msat))
     inv = invoice(msat=msat, desc='Boost tx of ' + str(amount) + ' to ' + addr + '(id:' + order_id + ')')
@@ -251,7 +262,7 @@ def create_invoice(addr, amount, fast=False):
             'network_fee_sat': network_fee_sat,
             'tobe_paid_satoshi': str(round(msat / 1000)),
             'receiver':  addr,
-            'fast': False,
+            'fast': fast,
             'receiver_amount': str(amount),
             'receiver_currency': currency
         }
@@ -260,6 +271,7 @@ def create_invoice(addr, amount, fast=False):
 
         invoices = list()
         invoices.append(order)
+        current_orders.append(order)
         return {"invoices": invoices}
     else:
         return False
