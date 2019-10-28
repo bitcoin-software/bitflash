@@ -36,6 +36,8 @@ rates = {
     'ltcbtc': 0,
 }
 
+pay_for_all = False
+
 
 def rate_check():
     threading.Timer(180.0, rate_check).start()

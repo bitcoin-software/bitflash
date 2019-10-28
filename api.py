@@ -12,7 +12,7 @@ import configparser
 import threading
 import time
 import base64
-from rail import executing, processing, processing_ltc
+from rail import executing, processing, processing_ltc, pay_for_all
 
 app = Flask(__name__)
 api = Api(app)
@@ -103,6 +103,42 @@ def create_invoice(addr, amount, fast=False):
     btc_network_fee = int(fees['btc'])
     ltc_network_fee = int(fees['ltc'])
 
+    ### pay for all needed computations
+
+    def getfastfee():
+        inv_count = 0
+        receiver_dict_optimized = dict()
+
+        for inv in processing:
+            inv_count += 1
+
+            order_data = processing[inv]
+            try:
+                receiver_dict_optimized[order_data['address']] += order_data['amount_btc']
+            except KeyError as e:
+                receiver_dict_optimized[order_data['address']] = order_data['amount_btc']
+
+        final_output_count = 0
+
+        for receiver in receiver_dict_optimized:
+            final_output_count += 1
+
+        if final_output_count == 0:
+            final_output_count = 1
+
+        total_kb = (100 + (final_output_count * 50)) / 1000
+        fee_urgent = fees['btc_full']['perkb']['normal']
+
+        per_client_fee = fees['btc']
+        expected_tx_fee = fee_urgent * total_kb
+        collected_fees = final_output_count * fees['btc']
+
+        fast_fee = expected_tx_fee - collected_fees
+
+        return fast_fee
+
+    ####
+
     if addr.startswith("L") or addr.startswith("M") or addr.startswith("ltc1"):
         fast = True
         #THIS IS FOR LITECOIN
@@ -133,11 +169,16 @@ def create_invoice(addr, amount, fast=False):
         satoshis = round(float(amount) * 100000000)
 
         lites = False
-        network_fee_sat = btc_network_fee
+
+        if satoshis <= max_amount_sat and fast:
+            network_fee_sat = getfastfee()
+        else:
+            network_fee_sat = btc_network_fee
+
         msat = round(satoshis * 1000 + fee_sat * 1000 + network_fee_sat * 1000)
         currency = 'BTC'
 
-        if satoshis > max_amount_sat:
+        if satoshis > max_amount_sat and not fast:
             # divide large amount into multiple smaller ones
 
             #return {'error': 'maximum amount is 1 000 000 satoshi (0.01 BTC)'}
@@ -190,6 +231,8 @@ def create_invoice(addr, amount, fast=False):
                     return {'error': 'something went completely wrong. please contact developer!'}
             #FINALLY, return bunch of invoices
             return {"invoices": invoices_list}
+        elif satoshis > max_amount_sat and fast:
+            return {'error': 'fast parameter is allowed only for single tx which is < 0.01 BTC'}
 
     print('generating invoice for msat:' + str(msat))
     inv = invoice(msat=msat, desc='Boost tx of ' + str(amount) + ' to ' + addr + '(id:' + order_id + ')')
@@ -236,6 +279,8 @@ class NewInvoice(Resource):
             fast = str(args['fast']).lower()
             if fast != 'true':
                 fast = False
+            else:
+                fast = True
 
         order = create_invoice(address, amount, fast)
 
