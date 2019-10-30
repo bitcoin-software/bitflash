@@ -184,12 +184,13 @@ def batch():
     print('per client: ' + str(fees['btc']))
     print('for tx (est. normal): ' + "{:.1f}".format(fee_urgent*total_kb) + ', absolute fee: ' + "{:.8f}".format(round(int(fee_urgent*total_kb)/100000000,8)))
     print('current kb size: ' + str(total_kb))
-    print('currently collected from ' + str(inv_count) + ' users: ' + str(inv_count*fees['btc']))
-    print('we need for tx to pay: ' + str(final_output_count*fees['btc']))
+    print('currently collected from ' + str(inv_count) + ' calls: ' + str(inv_count*fees['btc']))
+    print('real fee to pay currently (with merged outputs): ' + str(final_output_count*fees['btc']))
+    print('current output count: ' + str(final_output_count))
 
     global pay_for_all
 
-    if final_output_count*fees['btc'] > fee_urgent*total_kb or pay_for_all:
+    if (final_output_count*fees['btc'] > fee_urgent*total_kb) or pay_for_all:
         pay_for_all = False
         print('we want to send BTC: ' + btc_addr_str)
         network_fee = round(int(fee_urgent*total_kb)/100000000,8)

@@ -288,6 +288,7 @@ class NewInvoice(Resource):
 
         fast = False
         if 'fast' in args.keys():
+            print('is fast')
             fast = str(args['fast']).lower()
             if fast != 'true':
                 fast = False

@@ -108,12 +108,12 @@ function getdata() {
         }).then(function(data) {
            $("#payment").hide()
            $("#payment-data").show()
-           $('#qrlink-payment').attr("href", "lightning:"+data.bolt11);
-           new QRCode(document.getElementById("qr"), data.bolt11);
+           $('#qrlink-payment').attr("href", "lightning:"+data.invoices.bolt11);
+           new QRCode(document.getElementById("qr"), data.invoices.bolt11);
            $('#bolt11-text').text(data.bolt11);
-           $('#order-id').html("<b>Order ID:</b> " + data.order_id);
-           $('#order-payto').html("Pay network fee of " + data.network_fee_sat + " <i>satoshi</i> and BitFlash fee of " + data.fee_satoshi + " <i>satoshi</i>, total: " + data.tobe_paid_satoshi + "  <i>satoshi</i> (" + parseFloat(data.tobe_paid_satoshi/100000000*btcusd).toFixed(2) + " USD or " + parseFloat(data.tobe_paid_satoshi/100000000).toFixed(5) + " BTC)")
-           $('#order-receiveto').html("We will send <b>" + data.receiver_amount + " " + data.receiver_currency + "</b> to <a href=\"https://chain.so/resolver?query=" + data.receiver + "\">" + data.receiver + "</a> after LN invoice is paid");
+           $('#order-id').html("<b>Order ID:</b> " + data.invoices);
+           $('#order-payto').html("Pay network fee of " + data.invoices[0].network_fee_sat + " <i>satoshi</i> and BitFlash fee of " + data.invoices.fee_satoshi + " <i>satoshi</i>, total: " + data.tobe_paid_satoshi + "  <i>satoshi</i> (" + parseFloat(data.tobe_paid_satoshi/100000000*btcusd).toFixed(2) + " USD or " + parseFloat(data.tobe_paid_satoshi/100000000).toFixed(5) + " BTC)")
+           $('#order-receiveto').html("We will send <b>" + data.invoices.receiver_amount + " " + data.invoices.receiver_currency + "</b> to <a href=\"https://chain.so/resolver?query=" + data.receiver + "\">" + data.receiver + "</a> after LN invoice is paid");
            charge_id = data.charge_id
            setInterval(function() {
             //your jQuery ajax code
