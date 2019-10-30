@@ -282,6 +282,7 @@ class NewInvoice(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('address')
         parser.add_argument('amount')
+        parser.add_argument('fast')
         args = parser.parse_args()
         amount = args['amount']
         address = args['address']
