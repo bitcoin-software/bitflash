@@ -287,7 +287,9 @@ class NewInvoice(Resource):
         address = args['address']
 
         try:
+            print('tryin fast')
             too_fast = str(args['fast']).lower()
+            print('fast=' + too_fast)
             if too_fast == 'true':
                 fast = True
             else:
