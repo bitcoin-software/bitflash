@@ -99,8 +99,6 @@ def create_invoice(addr, amount, fast=False):
     order_id = hash.hexdigest()[:5]
 
     fee_sat = int(fees['service'])
-    #fee per one user
-    btc_network_fee = int(fees['btc'])
     ltc_network_fee = int(fees['ltc'])
 
     ### pay for all needed computations
@@ -138,6 +136,13 @@ def create_invoice(addr, amount, fast=False):
         return fast_fee
 
     ####
+
+    #fee per one user
+    if not fast:
+        btc_network_fee = int(fees['btc'])
+    else:
+        btc_network_fee = getfastfee()
+
 
     if addr.startswith("L") or addr.startswith("M") or addr.startswith("ltc1"):
         fast = True
@@ -288,9 +293,7 @@ class NewInvoice(Resource):
         address = args['address']
 
         try:
-            print('tryin fast')
             too_fast = str(args['fast']).lower()
-            print('fast=' + too_fast)
             if too_fast == 'true':
                 fast = True
             else:
