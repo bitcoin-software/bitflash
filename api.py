@@ -286,14 +286,14 @@ class NewInvoice(Resource):
         amount = args['amount']
         address = args['address']
 
-        fast = False
-        if 'fast' in args.keys():
-            print('is fast')
-            fast = str(args['fast']).lower()
-            if fast != 'true':
-                fast = False
-            else:
+        try:
+            too_fast = str(args['fast']).lower()
+            if too_fast == 'true':
                 fast = True
+            else:
+                fast = False
+        except KeyError as e:
+            fast = False
 
         order = create_invoice(address, amount, fast)
 
