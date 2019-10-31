@@ -131,7 +131,7 @@ def create_invoice(addr, amount, fast=False):
         expected_tx_fee = fee_urgent * total_kb
         collected_fees = final_output_count * fees['btc']
 
-        fast_fee = expected_tx_fee - collected_fees
+        fast_fee = expected_tx_fee - (expected_tx_fee - collected_fees)
 
         return fast_fee
 
